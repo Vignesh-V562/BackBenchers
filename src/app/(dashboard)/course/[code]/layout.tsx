@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth-options";
 import { queryD1 } from "@/lib/d1";
 import Link from "next/link";
 import NavigationTabs from "./NavigationTabs";
@@ -10,7 +10,7 @@ export default async function CourseLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { code: string };
+  params: Promise<{ code: string }>;
 }) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user) {
@@ -18,7 +18,7 @@ export default async function CourseLayout({
   }
 
   const user = session.user as any;
-  const { code } = params;
+  const { code } = await params;
 
   // Fetch subject details for this course code, isolated to user's collegeId
   const { results: subjects } = await queryD1(

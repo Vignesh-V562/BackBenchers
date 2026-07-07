@@ -4,7 +4,7 @@ import { queryD1 } from "@/lib/d1";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getSessionUser();
@@ -12,7 +12,7 @@ export async function POST(
       return NextResponse.json({ error: "Access denied. Super Admin role required." }, { status: 403 });
     }
 
-    const { id: collegeId } = params;
+    const { id: collegeId } = await params;
     const { action } = await request.json(); // "verify" or "suspend"
 
     let status = "VERIFIED";

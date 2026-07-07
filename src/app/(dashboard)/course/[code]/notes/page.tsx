@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth-options";
 import { redirect, notFound } from "next/navigation";
 import { queryD1 } from "@/lib/d1";
 import NotesClient from "./NotesClient";
@@ -7,7 +7,7 @@ import NotesClient from "./NotesClient";
 export default async function NotesPage({
   params,
 }: {
-  params: { code: string };
+  params: Promise<{ code: string }>;
 }) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user) {
@@ -15,7 +15,7 @@ export default async function NotesPage({
   }
 
   const user = session.user as any;
-  const { code } = params;
+  const { code } = await params;
 
   // 1. Fetch subject details
   const { results: subjects } = await queryD1(

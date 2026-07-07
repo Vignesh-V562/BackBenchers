@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth-options";
 import { redirect, notFound } from "next/navigation";
 import { queryD1 } from "@/lib/d1";
 import QuestionDetailClient from "./QuestionDetailClient";
@@ -7,7 +7,7 @@ import QuestionDetailClient from "./QuestionDetailClient";
 export default async function QuestionDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user) {
@@ -15,7 +15,7 @@ export default async function QuestionDetailPage({
   }
 
   const user = session.user as any;
-  const { id: questionId } = params;
+  const { id: questionId } = await params;
 
   // 1. Fetch the question details
   const { results: questions } = await queryD1(

@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth-options";
 import { redirect, notFound } from "next/navigation";
 import { queryD1 } from "@/lib/d1";
 import DocumentDetailClient from "./DocumentDetailClient";
@@ -7,7 +7,7 @@ import DocumentDetailClient from "./DocumentDetailClient";
 export default async function DocumentDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const session = await getServerSession(authOptions);
   if (!session || !session.user) {
@@ -15,7 +15,7 @@ export default async function DocumentDetailPage({
   }
 
   const user = session.user as any;
-  const { id } = params;
+  const { id } = await params;
 
   // Query database for the document, checking college isolation
   const { results: documents } = await queryD1(

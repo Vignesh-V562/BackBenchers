@@ -4,7 +4,7 @@ import { queryScoped } from "@/lib/scoped-query";
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getSessionUser();
@@ -12,7 +12,7 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { id: answerId } = params;
+    const { id: answerId } = await params;
 
     // 1. Fetch the question details related to this answer
     const { results: qDetails } = await queryScoped(
