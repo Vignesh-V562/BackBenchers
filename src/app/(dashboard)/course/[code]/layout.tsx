@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
-import { queryD1 } from "@/lib/d1";
+import { queryScoped } from "@/lib/scoped-query";
 import NavigationTabs from "./NavigationTabs";
 
 export default async function CourseLayout({
@@ -20,7 +20,8 @@ export default async function CourseLayout({
   const { code } = await params;
 
   // Fetch subject details for this course code, isolated to user's collegeId
-  const { results: subjects } = await queryD1(
+  const { results: subjects } = await queryScoped(
+    user,
     `SELECT s.*, dept.name as department_name 
      FROM subjects s 
      LEFT JOIN departments dept ON s.department_id = dept.id 

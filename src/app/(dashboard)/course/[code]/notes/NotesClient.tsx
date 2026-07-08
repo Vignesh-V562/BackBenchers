@@ -57,21 +57,24 @@ export default function NotesClient({
   const [newStaffId, setNewStaffId] = useState("");
   const [newYear, setNewYear] = useState("2026");
   const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [page, setPage] = useState(1);
+  const LIMIT = 5;
 
   // Fetch notes list from API
   const fetchNotes = async () => {
     setLoading(true);
     try {
-      let url = `/api/documents?subjectId=${subjectId}&type=NOTES&sort=${sort}`;
+      let url = `/api/documents?subjectId=${subjectId}&type=NOTES&sort=${sort}&page=${page}&limit=${LIMIT}`;
       if (selectedStaffId) {
         url += `&staffId=${selectedStaffId}`;
       }
       const res = await fetch(url);
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Failed to load notes.");
+      if (!res.ok) throw new Error(data.error || "Failed to fetch notes.");
       setNotes(data);
     } catch (err: any) {
-      toast.error(err.message || "Failed to retrieve study notes.");
+      toast.error(err.message || "Failed to load notes.");
     } finally {
       setLoading(false);
     }
@@ -79,7 +82,7 @@ export default function NotesClient({
 
   useEffect(() => {
     fetchNotes();
-  }, [sort, selectedStaffId]);
+  }, [sort, page, selectedStaffId]);
 
   const handleVote = async (noteId: string, value: number) => {
     try {
@@ -156,13 +159,29 @@ export default function NotesClient({
       toast.error("Please fill required fields.");
       return;
     }
+    if (!selectedFile) {
+      toast.error("Please select a document file to upload.");
+      return;
+    }
 
     setUploading(true);
 
-    const mockFileUrl = "https://res.cloudinary.com/demo/image/upload/sample.pdf";
-    const mockFileType = "pdf";
-
     try {
+      // 1. Upload file to server upload API
+      const formData = new FormData();
+      formData.append("file", selectedFile);
+
+      const uploadRes = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+      const uploadData = await uploadRes.json();
+
+      if (!uploadRes.ok) {
+        throw new Error(uploadData.error || "File upload failed.");
+      }
+
+      // 2. Submit document metadata
       const res = await fetch("/api/documents", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -172,20 +191,21 @@ export default function NotesClient({
           type: "NOTES",
           title: newTitle.trim(),
           description: newDescription.trim() || undefined,
-          fileUrl: mockFileUrl,
-          fileType: mockFileType,
+          fileUrl: uploadData.secure_url,
+          fileType: uploadData.file_type,
           departmentId,
           year: parseInt(newYear, 10),
         }),
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed.");
+      if (!res.ok) throw new Error(data.error || "Upload metadata failed.");
 
       setUploadOpen(false);
       setNewTitle("");
       setNewDescription("");
       setNewStaffId("");
+      setSelectedFile(null);
       fetchNotes();
       toast.success("Note uploaded for moderation review.");
     } catch (err: any) {
@@ -206,7 +226,10 @@ export default function NotesClient({
             {["score", "newest"].map((opt) => (
               <button
                 key={opt}
-                onClick={() => setSort(opt)}
+                onClick={() => {
+                  setSort(opt);
+                  setPage(1);
+                }}
                 className={cn(
                   "text-xs px-3 py-1.5 rounded-full border transition-all cursor-pointer",
                   sort === opt
@@ -225,7 +248,10 @@ export default function NotesClient({
               <span className="text-xs text-text-tertiary">Staff:</span>
               <select
                 value={selectedStaffId}
-                onChange={(e) => setSelectedStaffId(e.target.value)}
+                onChange={(e) => {
+                  setSelectedStaffId(e.target.value);
+                  setPage(1);
+                }}
                 className="text-xs px-2 py-1.5 rounded-lg glass-form-control"
               >
                 <option value="">All Staff</option>
@@ -248,8 +274,20 @@ export default function NotesClient({
 
       {/* Notes List */}
       {loading ? (
-        <div className="py-20 text-center text-sm text-text-tertiary">
-          Loading course notes...
+        <div className="space-y-4">
+          {[1, 2, 3].map((n) => (
+            <div key={n} className="glass-card flex items-start gap-4 p-5 animate-pulse select-none">
+              <div className="w-10 h-10 rounded bg-white/[0.04] border border-white/[0.06] shrink-0" />
+              <div className="flex-1 space-y-3">
+                <div className="flex gap-2">
+                  <div className="h-4 w-12 bg-white/[0.04] rounded-full" />
+                  <div className="h-4 w-16 bg-white/[0.04] rounded-full" />
+                </div>
+                <div className="h-5 w-2/3 bg-white/[0.05] rounded" />
+                <div className="h-3 w-1/2 bg-white/[0.04] rounded" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : notes.length === 0 ? (
         <div className="glass-empty p-12 text-center text-sm text-text-tertiary space-y-4">
@@ -346,6 +384,31 @@ export default function NotesClient({
         </div>
       )}
 
+      {/* Pagination Controls */}
+      {!loading && (notes.length > 0 || page > 1) && (
+        <div className="flex items-center justify-between border-t border-white/[0.06] pt-4 mt-6">
+          <span className="text-xs text-text-tertiary">
+            Page {page}
+          </span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="px-3 py-1.5 rounded-lg border border-white/[0.06] bg-white/[0.02] text-xs font-bold hover:bg-white/[0.05] disabled:opacity-40 transition-all cursor-pointer text-white"
+            >
+              Previous
+            </button>
+            <button
+              onClick={() => setPage(p => p + 1)}
+              disabled={notes.length < LIMIT}
+              className="px-3 py-1.5 rounded-lg border border-white/[0.06] bg-white/[0.02] text-xs font-bold hover:bg-white/[0.05] disabled:opacity-40 transition-all cursor-pointer text-white"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Upload Note Dialog */}
       {uploadOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 glass-modal-overlay">
@@ -406,10 +469,15 @@ export default function NotesClient({
                 </div>
               </div>
 
-              <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-4 text-center border-dashed">
-                <FileText className="h-8 w-8 text-text-tertiary mx-auto mb-2 opacity-55" />
-                <p className="text-xs text-text-secondary">Cloudinary file sync active.</p>
-                <p className="text-[10px] text-text-tertiary">Files are isolated to college storage namespaces.</p>
+              <div className="space-y-1">
+                <label className="text-xs text-text-secondary">Select Document File (PDF, DOCX, JPG, PNG)</label>
+                <input
+                  type="file"
+                  accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+                  onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                  required
+                  className="w-full text-xs text-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-white/[0.05] file:text-text-primary hover:file:bg-white/[0.08] file:cursor-pointer bg-white/[0.02] border border-white/[0.06] rounded-lg p-2 focus:outline-none"
+                />
               </div>
 
               <button

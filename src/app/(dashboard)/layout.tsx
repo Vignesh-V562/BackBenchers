@@ -9,9 +9,14 @@ import {
   FolderLock, 
   HelpCircle, 
   ShieldAlert,
-  UserCheck
+  UserCheck,
+  Search,
+  Trophy,
+  FileText
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 import SignOutButton from "./SignOutButton";
+import MobileNav from "./MobileNav";
 
 export default async function DashboardLayout({
   children,
@@ -63,20 +68,48 @@ export default async function DashboardLayout({
         </div>
 
         {/* Navigation links */}
-        <nav className="flex-1 px-3 py-5 space-y-1">
+        <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto custom-scrollbar pb-6">
           <Link
             href="/dashboard"
-            className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-text-secondary hover:text-text-primary hover:bg-white/[0.04] transition-all duration-200 group"
+            className={cn(
+              "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all",
+              "text-text-secondary hover:text-text-primary hover:bg-white/[0.04]"
+            )}
           >
-            <LayoutDashboard className="h-4.5 w-4.5 group-hover:text-accent-primary transition-colors" />
-            Dashboard
+            <LayoutDashboard className="h-5 w-5" />
+            College Dashboard
+          </Link>
+
+          <Link
+            href="/documents"
+            className={cn(
+              "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all",
+              "text-text-secondary hover:text-text-primary hover:bg-white/[0.04]"
+            )}
+          >
+            <Search className="h-5 w-5" />
+            Global Search
+          </Link>
+
+          <Link
+            href="/leaderboard"
+            className={cn(
+              "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all",
+              "text-text-secondary hover:text-text-primary hover:bg-white/[0.04]"
+            )}
+          >
+            <Trophy className="h-5 w-5" />
+            Top Materials
           </Link>
 
           <Link
             href="/my-submissions"
-            className="flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl text-text-secondary hover:text-text-primary hover:bg-white/[0.04] transition-all duration-200 group"
+            className={cn(
+              "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all",
+              "text-text-secondary hover:text-text-primary hover:bg-white/[0.04]"
+            )}
           >
-            <FolderLock className="h-4.5 w-4.5 group-hover:text-accent-primary transition-colors" />
+            <FileText className="h-5 w-5" />
             My Submissions
           </Link>
 
@@ -135,12 +168,10 @@ export default async function DashboardLayout({
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="md:hidden h-8 w-8 rounded-full bg-accent-primary/10 border border-accent-primary/25 flex items-center justify-center font-bold text-accent-primary text-xs">
-              {user.name?.charAt(0).toUpperCase()}
-            </div>
             <span className="hidden sm:inline text-xs text-text-secondary bg-white/[0.04] backdrop-blur-sm px-3 py-1.5 rounded-full border border-white/[0.06]">
               {user.email}
             </span>
+            <MobileNav user={user} isSuperAdmin={isSuperAdmin} />
           </div>
         </header>
 

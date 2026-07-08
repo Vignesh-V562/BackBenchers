@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { redirect, notFound } from "next/navigation";
-import { queryD1 } from "@/lib/d1";
+import { queryScoped } from "@/lib/scoped-query";
 import DocumentDetailClient from "./DocumentDetailClient";
 
 export default async function DocumentDetailPage({
@@ -18,7 +18,8 @@ export default async function DocumentDetailPage({
   const { id } = await params;
 
   // Query database for the document, checking college isolation
-  const { results: documents } = await queryD1(
+  const { results: documents } = await queryScoped(
+    user,
     `SELECT d.*, 
             u.name as uploader_name, 
             s.name as subject_name, s.course_code as subject_code,
@@ -38,7 +39,8 @@ export default async function DocumentDetailPage({
   }
 
   // Fetch the user's vote on this document
-  const { results: votes } = await queryD1(
+  const { results: votes } = await queryScoped(
+    user,
     "SELECT value FROM votes WHERE user_id = ? AND document_id = ? LIMIT 1",
     [user.id, id]
   );

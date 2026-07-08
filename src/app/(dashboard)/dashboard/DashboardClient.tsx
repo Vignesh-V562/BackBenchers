@@ -8,9 +8,11 @@ import {
   ChevronRight, 
   Plus, 
   Building2, 
-  X
+  X,
+  UploadCloud
 } from "lucide-react";
 import { toast } from "sonner";
+import GlobalUploadModal from "./GlobalUploadModal";
 
 interface Dept {
   id: string;
@@ -41,6 +43,9 @@ export default function DashboardClient({
   
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedDepts, setExpandedDepts] = useState<Record<string, boolean>>({});
+
+  // Global Upload modal state
+  const [showGlobalUpload, setShowGlobalUpload] = useState(false);
 
   // Add department modal/form states
   const [showAddDept, setShowAddDept] = useState(false);
@@ -146,83 +151,104 @@ export default function DashboardClient({
 
   return (
     <div className="space-y-6">
-      {/* Dynamic Search Bar */}
-      <div className="relative">
-        <div className="relative flex items-center">
-          <Search className="absolute left-4 h-5 w-5 text-text-tertiary" />
-          <input
-            type="text"
-            placeholder="Search subjects by name or course code (e.g. CS101)..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-12 pr-12 text-sm rounded-xl glass-form-control shadow-lg"
-          />
+      {/* Global Upload Modal */}
+      {showGlobalUpload && (
+        <GlobalUploadModal 
+          departments={departments} 
+          onClose={() => setShowGlobalUpload(false)} 
+        />
+      )}
+
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center">
+        {/* Dynamic Search Bar */}
+        <div className="relative flex-1 w-full max-w-lg">
+          <div className="relative flex items-center">
+            <Search className="absolute left-4 h-5 w-5 text-text-tertiary" />
+            <input
+              type="text"
+              placeholder="Search subjects by name or course code (e.g. CS101)..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full h-12 pl-12 pr-12 text-sm rounded-xl glass-form-control shadow-lg"
+            />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery("")}
+                className="absolute right-4 text-text-tertiary hover:text-text-secondary cursor-pointer"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+
+          {/* Search Results Dropdown */}
           {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-4 text-text-tertiary hover:text-text-secondary cursor-pointer"
-            >
-              <X className="h-4 w-4" />
-            </button>
+            <div className="absolute left-0 right-0 top-full mt-2 z-20 max-h-60 overflow-y-auto rounded-xl glass-modal p-2">
+              {filteredSubjects.length > 0 ? (
+                filteredSubjects.map((s) => (
+                  <Link
+                    key={s.id}
+                    href={`/course/${s.course_code.toUpperCase()}/notes`}
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-white/[0.04] transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs font-mono font-bold glass-badge px-2.5 py-1 rounded">
+                        {s.course_code.toUpperCase()}
+                      </span>
+                      <span className="text-sm font-semibold truncate max-w-xs sm:max-w-md">
+                        {s.name}
+                      </span>
+                    </div>
+                    <span className="text-xs text-text-tertiary uppercase tracking-wider font-semibold">
+                      Sem {s.year_or_semester}
+                    </span>
+                  </Link>
+                ))
+              ) : (
+                <div className="p-4 text-center text-sm text-text-tertiary">
+                  No matching subjects found.
+                </div>
+              )}
+            </div>
           )}
         </div>
 
-        {/* Search Results Dropdown */}
-        {searchQuery && (
-          <div className="absolute left-0 right-0 top-full mt-2 z-20 max-h-60 overflow-y-auto rounded-xl glass-modal p-2">
-            {filteredSubjects.length > 0 ? (
-              filteredSubjects.map((s) => (
-                <Link
-                  key={s.id}
-                  href={`/course/${s.course_code.toUpperCase()}/notes`}
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-white/[0.04] transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-mono font-bold glass-badge px-2.5 py-1 rounded">
-                      {s.course_code.toUpperCase()}
-                    </span>
-                    <span className="text-sm font-semibold truncate max-w-xs sm:max-w-md">
-                      {s.name}
-                    </span>
-                  </div>
-                  <span className="text-xs text-text-tertiary uppercase tracking-wider font-semibold">
-                    Sem {s.year_or_semester}
-                  </span>
-                </Link>
-              ))
-            ) : (
-              <div className="p-4 text-center text-sm text-text-tertiary">
-                No matching subjects found.
-              </div>
-            )}
-          </div>
-        )}
+        {/* Global Upload Button */}
+        <button
+          onClick={() => setShowGlobalUpload(true)}
+          className="inline-flex h-12 items-center gap-2 rounded-xl bg-accent-primary px-6 text-sm font-bold text-brand-primary hover:bg-accent-primary-hover shadow-[0_4px_14px_rgba(180,168,255,0.3)] hover:shadow-[0_6px_20px_rgba(180,168,255,0.4)] cursor-pointer transition-all shrink-0"
+        >
+          <UploadCloud className="h-5 w-5" />
+          Upload Material
+        </button>
       </div>
 
       {/* Admin Action Buttons */}
-      <div className="flex flex-wrap gap-3">
-        <button
-          onClick={() => setShowAddDept(true)}
-          className="inline-flex h-9 items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm hover:bg-white/[0.06] px-4 py-2 text-xs font-bold text-text-secondary hover:text-text-primary transition-all cursor-pointer"
-        >
-          <Building2 className="h-3.5 w-3.5" />
-          Add Department
-        </button>
+      {user.role !== "STUDENT" && (
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={() => setShowAddDept(true)}
+            className="inline-flex h-9 items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm hover:bg-white/[0.06] px-4 py-2 text-xs font-bold text-text-secondary hover:text-text-primary transition-all cursor-pointer"
+          >
+            <Building2 className="h-3.5 w-3.5" />
+            Add Department
+          </button>
 
-        <button
-          onClick={() => {
-            if (departments.length === 0) {
-              toast.error("Create a department first before adding subjects.");
-              return;
-            }
-            setShowAddSubj(true);
-          }}
-          className="inline-flex h-9 items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm hover:bg-white/[0.06] px-4 py-2 text-xs font-bold text-text-secondary hover:text-text-primary transition-all cursor-pointer"
-        >
-          <Plus className="h-3.5 w-3.5" />
-          Add Subject
-        </button>
-      </div>
+          <button
+            onClick={() => {
+              if (departments.length === 0) {
+                toast.error("Create a department first before adding subjects.");
+                return;
+              }
+              setShowAddSubj(true);
+            }}
+            className="inline-flex h-9 items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm hover:bg-white/[0.06] px-4 py-2 text-xs font-bold text-text-secondary hover:text-text-primary transition-all cursor-pointer"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Add Subject
+          </button>
+        </div>
+      )}
 
       {/* Inline Forms / Modals for adding Dept/Subject */}
       {showAddDept && (

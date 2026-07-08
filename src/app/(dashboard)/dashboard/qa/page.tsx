@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { redirect } from "next/navigation";
-import { queryD1 } from "@/lib/d1";
+import { queryScoped } from "@/lib/scoped-query";
 import QaBoardClient from "./QaBoardClient";
 
 export default async function QaPage() {
@@ -13,7 +13,8 @@ export default async function QaPage() {
   const user = session.user as any;
 
   // 1. Fetch questions scoped by collegeId
-  const { results: questions } = await queryD1(
+  const { results: questions } = await queryScoped(
+    user,
     `SELECT q.*, 
             u.name as author_name, 
             s.name as subject_name, s.course_code as subject_code,
@@ -27,7 +28,8 @@ export default async function QaPage() {
   );
 
   // 2. Fetch subject list for question tagging
-  const { results: subjects } = await queryD1(
+  const { results: subjects } = await queryScoped(
+    user,
     "SELECT id, name, course_code FROM subjects WHERE college_id = ? ORDER BY name ASC",
     [user.collegeId]
   );

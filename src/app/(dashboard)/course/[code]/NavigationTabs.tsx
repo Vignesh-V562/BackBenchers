@@ -4,8 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
   FileText, 
-  HelpCircle, 
-  Flame, 
   BookOpen 
 } from "lucide-react";
 
@@ -29,16 +27,6 @@ export default function NavigationTabs({ code }: { code: string }) {
       name: "Question Papers",
       href: `/course/${cleanCode}/pyq`,
       icon: BookOpen,
-    },
-    {
-      name: "Curated Kits",
-      href: `/course/${cleanCode}/kit`,
-      icon: HelpCircle,
-    },
-    {
-      name: "Panic Mode",
-      href: `/course/${cleanCode}/panic`,
-      icon: Flame,
     },
   ];
 

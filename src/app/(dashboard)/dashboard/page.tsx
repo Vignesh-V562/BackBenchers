@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { redirect } from "next/navigation";
-import { queryD1 } from "@/lib/d1";
+import { queryScoped } from "@/lib/scoped-query";
 import DashboardClient from "./DashboardClient";
 
 export default async function DashboardPage() {
@@ -14,13 +14,15 @@ export default async function DashboardPage() {
   const user = session.user as any;
 
   // 1. Fetch departments of the user's college
-  const { results: departments } = await queryD1(
+  const { results: departments } = await queryScoped(
+    user,
     "SELECT * FROM departments WHERE college_id = ? ORDER BY name ASC",
     [user.collegeId]
   );
 
   // 2. Fetch subjects of the user's college
-  const { results: subjects } = await queryD1(
+  const { results: subjects } = await queryScoped(
+    user,
     `SELECT s.*, dept.name as department_name 
      FROM subjects s 
      LEFT JOIN departments dept ON s.department_id = dept.id 

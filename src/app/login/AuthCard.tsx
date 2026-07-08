@@ -44,6 +44,39 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
   const [signUpSuccess, setSignUpSuccess] = useState(false);
   const [signUpIsPending, setSignUpIsPending] = useState(false);
 
+  // Forgot Password states
+  const [isForgot, setIsForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotMessage, setForgotMessage] = useState("");
+  const [forgotError, setForgotError] = useState("");
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotError("");
+    setForgotMessage("");
+    setForgotLoading(true);
+
+    try {
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: forgotEmail }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setForgotMessage(data.message || "Reset link sent!");
+        setForgotEmail("");
+      } else {
+        setForgotError(data.error || "Failed to process reset request.");
+      }
+    } catch (err) {
+      setForgotError("A network error occurred. Please try again.");
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
   // Handle slide animations and push history states
   const toggleMode = (signUpActive: boolean) => {
     setIsSignUp(signUpActive);
@@ -151,22 +184,19 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
                 Account Created!
               </h2>
 
-              {signUpIsPending ? (
-                <div className="rounded-xl border border-yellow-500/30 bg-yellow-500/5 p-4 text-sm text-yellow-300 space-y-2">
-                  <ShieldAlert className="h-5 w-5 mx-auto text-yellow-400" />
-                  <p className="font-semibold">Verification Pending</p>
-                  <p className="text-xs text-gray-400 leading-relaxed">
-                    Since your email domain is new, we created a pending workspace
-                    for your college. You can sign in and browse/upload files
-                    immediately.
-                  </p>
-                </div>
-              ) : (
-                <p className="text-sm text-gray-400">
-                  Your account was successfully registered and linked to your
-                  college sandbox.
+              <div className="rounded-xl border border-accent-primary/30 bg-accent-primary/5 p-4 text-sm text-text-primary space-y-2 text-center w-full">
+                <ShieldAlert className="h-5 w-5 mx-auto text-accent-primary animate-pulse" />
+                <p className="font-semibold">Verification Email Sent</p>
+                <p className="text-xs text-text-secondary leading-relaxed">
+                  We sent a verification link to your institutional email.
+                  Please verify your email address to unlock your college academic workspace.
                 </p>
-              )}
+                {signUpIsPending && (
+                  <p className="text-[10px] text-accent-warning leading-relaxed mt-1">
+                    Note: Since your domain is new, your college workspace status will be pending admin review, but you can browse and upload once verified.
+                  </p>
+                )}
+              </div>
 
               <button
                 onClick={() => {
@@ -175,7 +205,7 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
                 }}
                 className="auth-btn-primary"
               >
-                Go to Sign In
+                Back to Sign In
                 <ArrowRight className="h-4 w-4" />
               </button>
             </div>
@@ -297,91 +327,156 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
         {/* SIGN IN FORM PANEL                                    */}
         {/* ===================================================== */}
         <div className="auth-form-panel auth-signin-panel">
-          <form onSubmit={handleSignIn} className="w-full max-w-xs space-y-4">
-            <div className="text-center mb-2">
-              <h2 className="auth-heading text-2xl text-white">Welcome Back</h2>
-              <p className="text-xs text-gray-400 mt-1">
-                Enter your credentials to access your sandbox
-              </p>
-            </div>
-
-            {signInError && (
-              <div className="auth-error">
-                <AlertCircle className="h-4 w-4 shrink-0 animate-pulse" />
-                <span>{signInError}</span>
+          {isForgot ? (
+            <form onSubmit={handleForgotPassword} className="w-full max-w-xs space-y-4">
+              <div className="text-center mb-2">
+                <h2 className="auth-heading text-2xl text-white">Reset Password</h2>
+                <p className="text-xs text-gray-400 mt-1">
+                  Enter your registered institutional email to request a reset link
+                </p>
               </div>
-            )}
 
-            {/* Email */}
-            <div className="auth-input-wrap relative">
-              <Mail className="auth-input-icon" />
-              <input
-                type="email"
-                placeholder="College Email"
-                value={signInEmail}
-                onChange={(e) => setSignInEmail(e.target.value)}
-                required
-                className="auth-input"
-                suppressHydrationWarning
-              />
-            </div>
+              {forgotError && (
+                <div className="auth-error">
+                  <AlertCircle className="h-4 w-4 shrink-0 animate-pulse" />
+                  <span>{forgotError}</span>
+                </div>
+              )}
 
-            {/* Password */}
-            <div className="auth-input-wrap relative">
-              <Lock className="auth-input-icon" />
-              <input
-                type="password"
-                placeholder="Password"
-                value={signInPassword}
-                onChange={(e) => setSignInPassword(e.target.value)}
-                required
-                className="auth-input"
-                suppressHydrationWarning
-              />
-            </div>
+              {forgotMessage && (
+                <div className="flex items-center gap-2 p-3 bg-accent-success/10 border border-accent-success/20 text-accent-success rounded-lg text-xs">
+                  <CheckCircle className="h-4 w-4 shrink-0" />
+                  <span>{forgotMessage}</span>
+                </div>
+              )}
 
-            {/* Remember me + Forgot */}
-            <div className="flex justify-between items-center text-xs">
-              <label className="flex items-center text-gray-400 cursor-pointer gap-1.5">
+              {/* Email */}
+              <div className="auth-input-wrap relative">
+                <Mail className="auth-input-icon" />
                 <input
-                  type="checkbox"
-                  className="h-3.5 w-3.5 rounded border-white/10 bg-white/5 accent-accent-primary"
+                  type="email"
+                  placeholder="College Email"
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
+                  required
+                  className="auth-input"
                   suppressHydrationWarning
                 />
-                Remember me
-              </label>
-              <a
-                href="#"
-                className="text-gray-400 hover:text-white transition-colors hover:underline"
+              </div>
+
+              <button
+                type="submit"
+                disabled={forgotLoading}
+                className="auth-btn-primary"
+                suppressHydrationWarning
               >
-                Forgot password?
-              </a>
-            </div>
+                {forgotLoading ? "Sending Link..." : "Send Reset Link"}
+                <ArrowRight className="h-4 w-4" />
+              </button>
 
-            <button
-              type="submit"
-              disabled={signInLoading}
-              className="auth-btn-primary"
-              suppressHydrationWarning
-            >
-              {signInLoading ? "Signing In..." : "Sign In"}
-              <ArrowRight className="h-4 w-4" />
-            </button>
-
-            {/* Mobile toggle */}
-            <div className="text-center mt-3 md:hidden">
-              <p className="text-xs text-gray-400">
-                Don&apos;t have an account?{" "}
+              <div className="text-center mt-3">
                 <button
                   type="button"
-                  onClick={() => toggleMode(true)}
-                  className="text-accent-primary font-semibold underline hover:text-accent-primary-hover cursor-pointer"
+                  onClick={() => {
+                    setIsForgot(false);
+                    setForgotError("");
+                    setForgotMessage("");
+                  }}
+                  className="text-xs text-accent-primary font-semibold underline hover:text-accent-primary-hover cursor-pointer"
                 >
-                  Create Account
+                  Back to Sign In
                 </button>
-              </p>
-            </div>
-          </form>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleSignIn} className="w-full max-w-xs space-y-4">
+              <div className="text-center mb-2">
+                <h2 className="auth-heading text-2xl text-white">Welcome Back</h2>
+                <p className="text-xs text-gray-400 mt-1">
+                  Enter your credentials to access your sandbox
+                </p>
+              </div>
+
+              {signInError && (
+                <div className="auth-error">
+                  <AlertCircle className="h-4 w-4 shrink-0 animate-pulse" />
+                  <span>{signInError}</span>
+                </div>
+              )}
+
+              {/* Email */}
+              <div className="auth-input-wrap relative">
+                <Mail className="auth-input-icon" />
+                <input
+                  type="email"
+                  placeholder="College Email"
+                  value={signInEmail}
+                  onChange={(e) => setSignInEmail(e.target.value)}
+                  required
+                  className="auth-input"
+                  suppressHydrationWarning
+                />
+              </div>
+
+              {/* Password */}
+              <div className="auth-input-wrap relative">
+                <Lock className="auth-input-icon" />
+                <input
+                  type="password"
+                  placeholder="Password"
+                  value={signInPassword}
+                  onChange={(e) => setSignInPassword(e.target.value)}
+                  required
+                  className="auth-input"
+                  suppressHydrationWarning
+                />
+              </div>
+
+              {/* Remember me + Forgot */}
+              <div className="flex justify-between items-center text-xs">
+                <label className="flex items-center text-gray-400 cursor-pointer gap-1.5">
+                  <input
+                    type="checkbox"
+                    className="h-3.5 w-3.5 rounded border-white/10 bg-white/5 accent-accent-primary"
+                    suppressHydrationWarning
+                  />
+                  Remember me
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setIsForgot(true)}
+                  className="text-gray-400 hover:text-white transition-colors hover:underline cursor-pointer bg-transparent border-0"
+                  suppressHydrationWarning
+                >
+                  Forgot password?
+                </button>
+              </div>
+
+              <button
+                type="submit"
+                disabled={signInLoading}
+                className="auth-btn-primary"
+                suppressHydrationWarning
+              >
+                {signInLoading ? "Signing In..." : "Sign In"}
+                <ArrowRight className="h-4 w-4" />
+              </button>
+
+              {/* Mobile toggle */}
+              <div className="text-center mt-3 md:hidden">
+                <p className="text-xs text-gray-400">
+                  Don&apos;t have an account?{" "}
+                  <button
+                    type="button"
+                    onClick={() => toggleMode(true)}
+                    className="text-accent-primary font-semibold underline hover:text-accent-primary-hover cursor-pointer"
+                  >
+                    Create Account
+                  </button>
+                </p>
+              </div>
+            </form>
+          )}
         </div>
 
         {/* ===================================================== */}

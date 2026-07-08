@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { redirect } from "next/navigation";
-import { queryD1 } from "@/lib/d1";
+import { queryScoped } from "@/lib/scoped-query";
 import { FileText } from "lucide-react";
 import Link from "next/link";
 
@@ -14,7 +14,8 @@ export default async function MySubmissionsPage() {
   const user = session.user as any;
 
   // Fetch documents uploaded by the active user
-  const { results: documents } = await queryD1(
+  const { results: documents } = await queryScoped(
+    user,
     `SELECT d.*, 
             s.name as subject_name, s.course_code as subject_code
      FROM documents d

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { queryD1 } from "@/lib/d1";
+import { sendEmail } from "@/lib/mail";
 
 // List of blacklisted generic email domains to enforce institutional signup
 const GENERIC_DOMAINS = new Set([
@@ -98,9 +99,40 @@ export async function POST(request: Request) {
       [userId, collegeId, name.trim(), cleanEmail, cleanDept, cleanYear, passwordHash]
     );
 
+    // 5. Generate and store verification token
+    const verificationToken = crypto.randomBytes(32).toString("hex");
+    const expires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 hours
+    const tokenId = crypto.randomUUID();
+
+    await queryD1(
+      `INSERT INTO verification_tokens (id, email, token, type, expires) VALUES (?, ?, ?, 'EMAIL_VERIFICATION', ?)`,
+      [tokenId, cleanEmail, verificationToken, expires]
+    );
+
+    // 6. Send verification email
+    const appUrl = process.env.NEXTAUTH_URL || "http://localhost:3000";
+    const verificationLink = `${appUrl}/verify-email?token=${verificationToken}`;
+
+    await sendEmail({
+      to: cleanEmail,
+      subject: "Verify your Backbenchers Account",
+      html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
+          <h2 style="color: #7c6dff;">Welcome to Backbenchers!</h2>
+          <p>Hi ${name.trim()},</p>
+          <p>Thank you for signing up. Please verify your email address to unlock your college academic workspace.</p>
+          <div style="margin: 24px 0;">
+            <a href="${verificationLink}" style="background-color: #7c6dff; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">Verify Email Address</a>
+          </div>
+          <p style="font-size: 12px; color: #666;">Or copy and paste this link into your browser: <br/> ${verificationLink}</p>
+          <p style="font-size: 12px; color: #999; margin-top: 24px;">This link will expire in 24 hours.</p>
+        </div>
+      `
+    });
+
     return NextResponse.json({
       success: true,
-      message: "User registered successfully.",
+      message: "User registered successfully. Please verify your email address.",
       user: {
         id: userId,
         name,

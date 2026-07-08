@@ -38,6 +38,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (user.role === "STUDENT") {
+      return NextResponse.json({ error: "Forbidden. Admin access required." }, { status: 403 });
+    }
+
     const { name, departmentId } = await request.json();
 
     if (!name || !departmentId) {

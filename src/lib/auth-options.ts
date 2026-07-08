@@ -32,6 +32,20 @@ export const authOptions: AuthOptions = {
           throw new Error("Account has no password configured");
         }
 
+        // Enforce email verification check
+        if (!user.email_verified) {
+          throw new Error("Please verify your email address before signing in.");
+        }
+
+        // Enforce college suspension check
+        const { results: colleges } = await queryD1(
+          "SELECT status FROM colleges WHERE id = ? LIMIT 1",
+          [user.college_id]
+        );
+        if (colleges.length > 0 && colleges[0].status === "SUSPENDED") {
+          throw new Error("Your college workspace has been suspended. Please contact support.");
+        }
+
         // Verify password
         const isPasswordCorrect = await bcrypt.compare(
           credentials.password,

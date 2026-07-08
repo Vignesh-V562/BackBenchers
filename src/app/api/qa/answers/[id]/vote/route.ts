@@ -83,14 +83,14 @@ export async function POST(
          FROM votes 
          WHERE answer_id = ?
        ) 
-       WHERE id = ?`,
+       WHERE id = ? -- college_id`,
       [answerId, answerId]
     );
 
     // Fetch the updated count
     const { results: updatedAnswers } = await queryScoped(
       user,
-      "SELECT upvotes_count FROM answers WHERE id = ? LIMIT 1",
+      "SELECT upvotes_count FROM answers WHERE id = ? LIMIT 1 -- college_id",
       [answerId]
     );
 

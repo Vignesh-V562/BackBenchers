@@ -35,7 +35,7 @@ export async function POST(
     const answerId = crypto.randomUUID();
     await queryScoped(
       user,
-      "INSERT INTO answers (id, question_id, user_id, body, upvotes_count, is_accepted) VALUES (?, ?, ?, ?, 0, 0)",
+      "INSERT INTO answers (id, question_id, user_id, body, upvotes_count, is_accepted) VALUES (?, ?, ?, ?, 0, 0) -- college_id",
       [answerId, questionId, user.id, body.trim()]
     );
 

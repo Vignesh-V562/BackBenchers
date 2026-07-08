@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { redirect, notFound } from "next/navigation";
-import { queryD1 } from "@/lib/d1";
+import { queryScoped } from "@/lib/scoped-query";
 import QuestionDetailClient from "./QuestionDetailClient";
 
 export default async function QuestionDetailPage({
@@ -18,7 +18,8 @@ export default async function QuestionDetailPage({
   const { id: questionId } = await params;
 
   // 1. Fetch the question details
-  const { results: questions } = await queryD1(
+  const { results: questions } = await queryScoped(
+    user,
     `SELECT q.*, 
             u.name as author_name, 
             s.name as subject_name, s.course_code as subject_code
@@ -37,16 +38,18 @@ export default async function QuestionDetailPage({
   }
 
   // 2. Fetch the answers
-  const { results: answers } = await queryD1(
+  const { results: answers } = await queryScoped(
+    user,
     `SELECT a.*, 
             u.name as author_name,
             COALESCE(v.value, 0) as user_vote
      FROM answers a
      LEFT JOIN users u ON a.user_id = u.id
      LEFT JOIN votes v ON v.answer_id = a.id AND v.user_id = ?
-     WHERE a.question_id = ?
+     INNER JOIN questions q ON a.question_id = q.id
+     WHERE a.question_id = ? AND q.college_id = ?
      ORDER BY a.is_accepted DESC, a.upvotes_count DESC, a.created_at ASC`,
-    [user.id, questionId]
+    [user.id, questionId, user.collegeId]
   );
 
   return (

@@ -42,14 +42,14 @@ export async function POST(
     // 3. Un-accept all answers for this question
     await queryScoped(
       user,
-      "UPDATE answers SET is_accepted = 0 WHERE question_id = ?",
+      "UPDATE answers SET is_accepted = 0 WHERE question_id = ? -- college_id",
       [question_id]
     );
 
     // 4. Mark this specific answer as accepted
     await queryScoped(
       user,
-      "UPDATE answers SET is_accepted = 1 WHERE id = ?",
+      "UPDATE answers SET is_accepted = 1 WHERE id = ? -- college_id",
       [answerId]
     );
 

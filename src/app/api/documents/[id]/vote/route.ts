@@ -80,8 +80,8 @@ export async function POST(
          FROM votes 
          WHERE document_id = ?
        ) 
-       WHERE id = ?`,
-      [documentId, documentId]
+       WHERE id = ? AND college_id = ?`,
+      [documentId, documentId, user.collegeId]
     );
 
     // Fetch the updated document details

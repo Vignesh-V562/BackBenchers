@@ -779,3 +779,11 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   }
 }
+
+/* Fix native select option visibility in dark mode */
+@layer base {
+  option {
+    background-color: var(--color-brand-surface);
+    color: var(--color-text-primary);
+  }
+}
