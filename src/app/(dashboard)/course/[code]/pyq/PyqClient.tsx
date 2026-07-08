@@ -198,7 +198,7 @@ export default function PyqClient({
   return (
     <div className="space-y-6">
       {/* Search & Filter Panel */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-brand-surface/40 p-4 rounded-xl border border-brand-border backdrop-blur-xl">
+      <div className="glass-toolbar flex flex-wrap items-center justify-between gap-4 p-4">
         <div className="flex items-center gap-4 flex-wrap">
           {/* Filter by Exam Category */}
           <div className="flex items-center gap-1.5">
@@ -206,7 +206,7 @@ export default function PyqClient({
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="text-xs px-2 py-1 rounded-lg bg-brand-elevated border border-brand-border text-text-secondary focus:outline-none focus:border-accent-primary"
+              className="text-xs px-2 py-1.5 rounded-lg glass-form-control"
             >
               <option value="">All Exams</option>
               <option value="CIA1">CIA 1</option>
@@ -224,14 +224,14 @@ export default function PyqClient({
               placeholder="All Years"
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
-              className="text-xs w-20 px-2 py-1 rounded-lg bg-brand-elevated border border-brand-border text-text-secondary focus:outline-none focus:border-accent-primary placeholder:text-text-tertiary"
+              className="text-xs w-20 px-2 py-1.5 rounded-lg glass-form-control placeholder:text-text-tertiary"
             />
           </div>
         </div>
 
         <button
           onClick={() => setUploadOpen(true)}
-          className="inline-flex h-9 items-center gap-2 rounded-full bg-accent-primary px-4 text-xs font-bold text-brand-primary hover:bg-accent-primary-hover shadow-lg cursor-pointer"
+          className="inline-flex h-9 items-center gap-2 rounded-full bg-accent-primary px-4 text-xs font-bold text-brand-primary hover:bg-accent-primary-hover shadow-lg hover:shadow-accent-primary/20 cursor-pointer transition-all"
         >
           <Plus className="h-3.5 w-3.5" />
           Upload PYQ
@@ -244,7 +244,7 @@ export default function PyqClient({
           Loading question papers...
         </div>
       ) : pyqs.length === 0 ? (
-        <div className="rounded-xl border border-brand-border bg-brand-surface/20 p-12 text-center text-sm text-text-tertiary space-y-4">
+        <div className="glass-empty p-12 text-center text-sm text-text-tertiary space-y-4">
           <GraduationCap className="h-10 w-10 text-text-tertiary mx-auto opacity-40 animate-pulse" />
           <p>No previous year question papers uploaded for this course yet.</p>
           <button
@@ -259,10 +259,10 @@ export default function PyqClient({
           {pyqs.map((pyq) => (
             <div 
               key={pyq.id}
-              className="flex items-start gap-4 p-4 rounded-xl border border-brand-border bg-brand-surface/50 backdrop-blur-xl shadow-card hover:border-brand-border-strong transition-all duration-300"
+              className="glass-card flex items-start gap-4 p-5"
             >
               {/* Score controls */}
-              <div className="flex flex-col items-center gap-1 bg-brand-elevated/40 p-2 rounded-lg border border-brand-border shrink-0 select-none">
+              <div className="glass-vote flex flex-col items-center gap-1 p-2 shrink-0 select-none">
                 <button
                   onClick={() => handleVote(pyq.id, 1)}
                   className={cn(
@@ -287,16 +287,16 @@ export default function PyqClient({
               </div>
 
               {/* Details */}
-              <div className="min-w-0 flex-1 space-y-1">
+              <div className="min-w-0 flex-1 space-y-1.5">
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="text-[10px] font-bold uppercase bg-accent-primary/10 text-accent-primary border border-accent-primary/20 px-2 py-0.5 rounded-full">
                     {pyq.exam_category}
                   </span>
-                  <span className="text-xs font-semibold text-text-secondary bg-brand-elevated px-2 py-0.5 rounded border border-brand-border">
+                  <span className="text-xs font-semibold text-text-secondary bg-white/[0.04] px-2 py-0.5 rounded border border-white/[0.06]">
                     Year {pyq.year}
                   </span>
                   {pyq.staff_name && (
-                    <span className="text-xs font-semibold text-accent-primary/80 bg-accent-primary/5 px-2 py-0.5 rounded border border-accent-primary/10">
+                    <span className="text-xs font-semibold text-accent-primary/80 bg-accent-primary/[0.06] px-2 py-0.5 rounded border border-accent-primary/10">
                       Prof. {pyq.staff_name}
                     </span>
                   )}
@@ -309,7 +309,7 @@ export default function PyqClient({
                     {pyq.description}
                   </p>
                 )}
-                <div className="flex items-center gap-3 pt-2 text-[10px] text-text-tertiary font-medium">
+                <div className="flex items-center gap-3 pt-1 text-[10px] text-text-tertiary font-medium">
                   <span>Uploaded by {pyq.uploader_name}</span>
                   <span>•</span>
                   <span>{pyq.downloads_count} downloads</span>
@@ -317,10 +317,10 @@ export default function PyqClient({
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-1 shrink-0 self-center">
+              <div className="flex items-center gap-1.5 shrink-0 self-center">
                 <button
                   onClick={() => handleDownload(pyq.id, pyq.file_url)}
-                  className="p-2.5 rounded-lg border border-brand-border bg-brand-elevated/40 hover:bg-brand-elevated text-text-secondary hover:text-text-primary transition-all cursor-pointer"
+                  className="p-2.5 rounded-lg border border-white/[0.06] bg-white/[0.03] hover:bg-white/[0.06] text-text-secondary hover:text-text-primary transition-all cursor-pointer backdrop-blur-sm"
                   title="Open Question Paper"
                 >
                   <Download className="h-4.5 w-4.5" />
@@ -330,7 +330,7 @@ export default function PyqClient({
                     setSelectedReportId(pyq.id);
                     setReportOpen(true);
                   }}
-                  className="p-2.5 rounded-lg border border-brand-border bg-brand-elevated/40 hover:bg-accent-panic-glow text-text-tertiary hover:text-accent-panic hover:border-accent-panic/10 transition-all cursor-pointer"
+                  className="p-2.5 rounded-lg border border-white/[0.06] bg-white/[0.03] hover:bg-accent-panic/[0.06] text-text-tertiary hover:text-accent-panic hover:border-accent-panic/15 transition-all cursor-pointer backdrop-blur-sm"
                   title="Report File"
                 >
                   <Flag className="h-4.5 w-4.5" />
@@ -343,9 +343,9 @@ export default function PyqClient({
 
       {/* Upload PYQ Dialog */}
       {uploadOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-primary/85 backdrop-blur-md">
-          <div className="w-full max-w-md bg-brand-surface border border-brand-border rounded-2xl p-6 shadow-modal space-y-4">
-            <div className="flex items-center justify-between border-b border-brand-border pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 glass-modal-overlay">
+          <div className="w-full max-w-md glass-modal p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
               <h3 className="font-bold text-base">Upload Question Paper</h3>
               <button onClick={() => setUploadOpen(false)} className="text-text-tertiary hover:text-text-primary cursor-pointer">
                 <X className="h-5 w-5" />
@@ -360,7 +360,7 @@ export default function PyqClient({
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   required
-                  className="w-full h-10 px-4 rounded-lg bg-brand-elevated border border-brand-border text-sm"
+                  className="w-full h-10 px-4 rounded-lg glass-form-control text-sm"
                 />
               </div>
 
@@ -372,7 +372,7 @@ export default function PyqClient({
                     value={newYear}
                     onChange={(e) => setNewYear(e.target.value)}
                     required
-                    className="w-full h-10 px-4 rounded-lg bg-brand-elevated border border-brand-border text-sm"
+                    className="w-full h-10 px-4 rounded-lg glass-form-control text-sm"
                   />
                 </div>
 
@@ -382,7 +382,7 @@ export default function PyqClient({
                     value={newCategory}
                     onChange={(e) => setNewCategory(e.target.value)}
                     required
-                    className="w-full h-10 px-3 rounded-lg bg-brand-elevated border border-brand-border text-sm text-text-primary"
+                    className="w-full h-10 px-3 rounded-lg glass-form-control text-sm"
                   >
                     <option value="CIA1">CIA 1</option>
                     <option value="CIA2">CIA 2</option>
@@ -398,7 +398,7 @@ export default function PyqClient({
                   <select
                     value={newStaffId}
                     onChange={(e) => setNewStaffId(e.target.value)}
-                    className="w-full h-10 px-3 rounded-lg bg-brand-elevated border border-brand-border text-sm text-text-primary"
+                    className="w-full h-10 px-3 rounded-lg glass-form-control text-sm"
                   >
                     <option value="">None / Other</option>
                     {staffList.map((st) => (
@@ -414,11 +414,11 @@ export default function PyqClient({
                   placeholder="Optional notes or details about the questions..."
                   value={newDescription}
                   onChange={(e) => setNewDescription(e.target.value)}
-                  className="w-full h-20 p-3 rounded-lg bg-brand-elevated border border-brand-border text-sm focus:outline-none"
+                  className="w-full h-20 p-3 rounded-lg glass-form-control text-sm"
                 />
               </div>
 
-              <div className="rounded-lg border border-brand-border bg-brand-elevated/40 p-4 text-center border-dashed">
+              <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-4 text-center border-dashed">
                 <FileText className="h-8 w-8 text-text-tertiary mx-auto mb-2 opacity-55" />
                 <p className="text-xs text-text-secondary">Cloudinary file sync active.</p>
                 <p className="text-[10px] text-text-tertiary">Files are isolated to college storage namespaces.</p>
@@ -438,9 +438,9 @@ export default function PyqClient({
 
       {/* Report Modal */}
       {reportOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-primary/85 backdrop-blur-md">
-          <div className="w-full max-w-sm bg-brand-surface border border-brand-border rounded-2xl p-6 shadow-modal space-y-4">
-            <div className="flex items-center justify-between border-b border-brand-border pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 glass-modal-overlay">
+          <div className="w-full max-w-sm glass-modal p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
               <h3 className="font-bold text-base text-accent-panic">Report Document</h3>
               <button onClick={() => setReportOpen(false)} className="text-text-tertiary hover:text-text-primary cursor-pointer">
                 <X className="h-5 w-5" />
@@ -454,7 +454,7 @@ export default function PyqClient({
                   value={reportReason}
                   onChange={(e) => setReportReason(e.target.value)}
                   required
-                  className="w-full h-24 p-3 rounded-lg bg-brand-elevated border border-brand-border text-sm focus:outline-none"
+                  className="w-full h-24 p-3 rounded-lg glass-form-control text-sm"
                 />
               </div>
 

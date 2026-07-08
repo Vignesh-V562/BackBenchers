@@ -207,6 +207,7 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
                   onChange={(e) => setSignUpName(e.target.value)}
                   required
                   className="auth-input"
+                  suppressHydrationWarning
                 />
               </div>
 
@@ -220,6 +221,7 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
                   onChange={(e) => setSignUpEmail(e.target.value)}
                   required
                   className="auth-input"
+                  suppressHydrationWarning
                 />
               </div>
 
@@ -234,6 +236,7 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
                   required
                   minLength={6}
                   className="auth-input"
+                  suppressHydrationWarning
                 />
               </div>
 
@@ -247,6 +250,7 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
                     value={signUpDept}
                     onChange={(e) => setSignUpDept(e.target.value)}
                     className="auth-input"
+                    suppressHydrationWarning
                   />
                 </div>
                 <div className="auth-input-wrap relative">
@@ -257,6 +261,7 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
                     value={signUpYear}
                     onChange={(e) => setSignUpYear(e.target.value)}
                     className="auth-input"
+                    suppressHydrationWarning
                   />
                 </div>
               </div>
@@ -265,6 +270,7 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
                 type="submit"
                 disabled={signUpLoading}
                 className="auth-btn-primary mt-1"
+                suppressHydrationWarning
               >
                 {signUpLoading ? "Creating Account..." : "Sign Up"}
                 <ArrowRight className="h-4 w-4" />
@@ -316,6 +322,7 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
                 onChange={(e) => setSignInEmail(e.target.value)}
                 required
                 className="auth-input"
+                suppressHydrationWarning
               />
             </div>
 
@@ -329,6 +336,7 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
                 onChange={(e) => setSignInPassword(e.target.value)}
                 required
                 className="auth-input"
+                suppressHydrationWarning
               />
             </div>
 
@@ -338,6 +346,7 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
                 <input
                   type="checkbox"
                   className="h-3.5 w-3.5 rounded border-white/10 bg-white/5 accent-accent-primary"
+                  suppressHydrationWarning
                 />
                 Remember me
               </label>
@@ -353,6 +362,7 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
               type="submit"
               disabled={signInLoading}
               className="auth-btn-primary"
+              suppressHydrationWarning
             >
               {signInLoading ? "Signing In..." : "Sign In"}
               <ArrowRight className="h-4 w-4" />
@@ -400,6 +410,7 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
                 onClick={() => toggleMode(false)}
                 className="auth-btn-ghost"
                 id="auth-signIn-toggle"
+                suppressHydrationWarning
               >
                 Sign In
               </button>
@@ -426,6 +437,7 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
                 onClick={() => toggleMode(true)}
                 className="auth-btn-ghost"
                 id="auth-signUp-toggle"
+                suppressHydrationWarning
               >
                 Sign Up
               </button>

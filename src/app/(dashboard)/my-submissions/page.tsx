@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { redirect } from "next/navigation";
 import { queryD1 } from "@/lib/d1";
-import { FileText, CheckCircle2, AlertCircle } from "lucide-react";
+import { FileText } from "lucide-react";
 import Link from "next/link";
 
 export default async function MySubmissionsPage() {
@@ -34,7 +34,7 @@ export default async function MySubmissionsPage() {
       </div>
 
       {documents.length === 0 ? (
-        <div className="rounded-xl border border-brand-border bg-brand-surface/20 p-12 text-center text-sm text-text-secondary max-w-2xl mx-auto space-y-3 mt-10">
+        <div className="glass-empty p-12 text-center text-sm text-text-secondary max-w-2xl mx-auto space-y-3 mt-10">
           <FileText className="h-10 w-10 text-text-tertiary mx-auto opacity-40" />
           <p className="font-semibold text-text-primary">No submissions yet</p>
           <p className="text-xs text-text-tertiary">
@@ -42,7 +42,7 @@ export default async function MySubmissionsPage() {
           </p>
           <Link
             href="/dashboard"
-            className="inline-flex h-9 items-center justify-center rounded-full bg-accent-primary px-4 text-xs font-bold text-brand-primary hover:bg-accent-primary-hover shadow-lg mt-2"
+            className="inline-flex h-9 items-center justify-center rounded-full bg-accent-primary px-4 text-xs font-bold text-brand-primary hover:bg-accent-primary-hover shadow-lg mt-2 transition-all hover:shadow-accent-primary/20"
           >
             Browse subjects to upload
           </Link>
@@ -52,11 +52,11 @@ export default async function MySubmissionsPage() {
           {documents.map((doc: any) => (
             <div
               key={doc.id}
-              className="flex items-center justify-between p-4 rounded-xl border border-brand-border bg-brand-surface/40 backdrop-blur-xl shadow-card"
+              className="glass-card flex items-center justify-between p-5"
             >
-              <div className="min-w-0 flex-1 space-y-1 pr-4">
+              <div className="min-w-0 flex-1 space-y-1.5 pr-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-[9px] font-mono font-bold text-accent-primary bg-semantic-course-badge-bg px-2 py-0.5 rounded border border-accent-primary/20">
+                  <span className="text-[9px] font-mono font-bold glass-badge px-2 py-0.5 rounded">
                     {doc.subject_code.toUpperCase()}
                   </span>
                   <span className="text-[10px] text-text-tertiary uppercase font-bold">
@@ -78,7 +78,7 @@ export default async function MySubmissionsPage() {
 
                 <Link
                   href={`/documents/${doc.id}`}
-                  className="inline-flex h-9 items-center justify-center rounded-lg border border-brand-border bg-brand-elevated hover:bg-brand-card hover:border-brand-border-strong px-4 text-xs font-bold transition-all cursor-pointer"
+                  className="inline-flex h-9 items-center justify-center rounded-lg border border-white/[0.06] bg-white/[0.03] hover:bg-white/[0.06] hover:border-accent-primary/20 px-4 text-xs font-bold transition-all cursor-pointer backdrop-blur-sm"
                 >
                   View Details
                 </Link>

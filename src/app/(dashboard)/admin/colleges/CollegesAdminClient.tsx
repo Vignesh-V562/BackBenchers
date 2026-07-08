@@ -4,8 +4,7 @@ import { useState } from "react";
 import { 
   Building2, 
   Check, 
-  X, 
-  AlertCircle 
+  X
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -36,7 +35,6 @@ export default function CollegesAdminClient({
 
       if (!res.ok) throw new Error(data.error || "Failed to update college status.");
 
-      // Remove from pending list locally
       setColleges((prev) => prev.filter((c) => c.id !== collegeId));
       toast.success(action === "verify" ? "College domain verified successfully." : "College suspended.");
     } catch (err: any) {
@@ -51,7 +49,7 @@ export default function CollegesAdminClient({
       </h3>
 
       {colleges.length === 0 ? (
-        <div className="rounded-xl border border-brand-border bg-brand-surface/20 p-12 text-center text-sm text-text-tertiary space-y-2">
+        <div className="glass-empty p-12 text-center text-sm text-text-tertiary space-y-2">
           <Check className="h-8 w-8 text-accent-success mx-auto" />
           <p className="font-semibold text-text-primary">Inbox Zero!</p>
           <p className="text-xs">No pending college verification requests are in the queue.</p>
@@ -61,10 +59,10 @@ export default function CollegesAdminClient({
           {colleges.map((col) => (
             <div 
               key={col.id}
-              className="flex items-center justify-between p-5 rounded-xl border border-brand-border bg-brand-surface/50 backdrop-blur-xl shadow-card"
+              className="glass-card flex items-center justify-between p-5"
             >
               <div className="flex items-center gap-4">
-                <div className="h-10 w-10 bg-accent-primary/10 border border-accent-primary/30 rounded-xl flex items-center justify-center text-accent-primary">
+                <div className="h-10 w-10 bg-accent-primary/10 border border-accent-primary/25 rounded-xl flex items-center justify-center text-accent-primary">
                   <Building2 className="h-5 w-5" />
                 </div>
                 <div>
@@ -80,14 +78,14 @@ export default function CollegesAdminClient({
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleAction(col.id, "verify")}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-accent-success px-4 text-xs font-bold text-brand-primary hover:bg-accent-success/90 cursor-pointer shadow-lg hover:shadow-accent-success/15"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg bg-accent-success px-4 text-xs font-bold text-brand-primary hover:bg-accent-success/90 cursor-pointer shadow-lg hover:shadow-accent-success/15 transition-all"
                 >
                   <Check className="h-3.5 w-3.5" />
                   Verify
                 </button>
                 <button
                   onClick={() => handleAction(col.id, "suspend")}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-brand-border bg-brand-surface hover:bg-accent-panic-glow text-text-secondary hover:text-accent-panic hover:border-accent-panic/20 px-4 text-xs font-bold transition-all cursor-pointer"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-white/[0.06] bg-white/[0.03] hover:bg-accent-panic/[0.06] text-text-secondary hover:text-accent-panic hover:border-accent-panic/20 px-4 text-xs font-bold transition-all cursor-pointer backdrop-blur-sm"
                 >
                   <X className="h-3.5 w-3.5" />
                   Suspend

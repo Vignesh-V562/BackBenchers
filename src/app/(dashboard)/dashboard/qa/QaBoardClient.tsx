@@ -7,11 +7,10 @@ import {
   Plus, 
   MessageSquare, 
   X,
-  Search,
-  BookOpen
+  Search
 } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+
 
 interface Question {
   id: string;
@@ -70,7 +69,6 @@ export default function QaBoardClient({
       setNewBody("");
       setNewSubjectId("");
       
-      // Reload questions (simple client-side append for instant feedback)
       const newQ: Question = {
         id: data.id,
         title: newTitle.trim(),
@@ -104,21 +102,21 @@ export default function QaBoardClient({
   return (
     <div className="space-y-6">
       {/* Search & Ask panel */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-brand-surface/40 p-4 rounded-xl border border-brand-border backdrop-blur-xl">
+      <div className="glass-toolbar flex flex-wrap items-center justify-between gap-4 p-4">
         <div className="relative flex-1 min-w-[240px]">
-          <Search className="absolute left-3.5 h-4.5 w-4.5 text-text-tertiary" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-text-tertiary" />
           <input
             type="text"
             placeholder="Search questions by topic or subject code..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-10 pl-10 pr-4 rounded-lg bg-brand-elevated border border-brand-border text-xs text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-accent-primary"
+            className="w-full h-10 pl-10 pr-4 rounded-lg glass-form-control text-xs"
           />
         </div>
 
         <button
           onClick={() => setAskOpen(true)}
-          className="inline-flex h-9 items-center gap-2 rounded-full bg-accent-primary px-4 text-xs font-bold text-brand-primary hover:bg-accent-primary-hover shadow-lg cursor-pointer"
+          className="inline-flex h-9 items-center gap-2 rounded-full bg-accent-primary px-4 text-xs font-bold text-brand-primary hover:bg-accent-primary-hover shadow-lg hover:shadow-accent-primary/20 cursor-pointer transition-all"
         >
           <Plus className="h-3.5 w-3.5" />
           Ask Question
@@ -127,7 +125,7 @@ export default function QaBoardClient({
 
       {/* Questions list */}
       {filteredQuestions.length === 0 ? (
-        <div className="rounded-xl border border-brand-border bg-brand-surface/20 p-12 text-center text-sm text-text-tertiary space-y-4">
+        <div className="glass-empty p-12 text-center text-sm text-text-tertiary space-y-4">
           <HelpCircle className="h-10 w-10 text-text-tertiary mx-auto opacity-40 animate-pulse" />
           <p>No questions found on the board. Start a discussion!</p>
           <button
@@ -143,13 +141,13 @@ export default function QaBoardClient({
             <Link
               key={q.id}
               href={`/dashboard/qa/${q.id}`}
-              className="block p-5 rounded-xl border border-brand-border bg-brand-surface/50 hover:bg-brand-surface hover:border-brand-border-strong transition-all duration-300 shadow-card"
+              className="glass-card-interactive block p-5"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="space-y-1.5 flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     {q.subject_code && (
-                      <span className="text-[10px] font-mono font-bold text-accent-primary bg-semantic-course-badge-bg px-2 py-0.5 rounded border border-accent-primary/20">
+                      <span className="text-[10px] font-mono font-bold glass-badge px-2 py-0.5 rounded">
                         {q.subject_code.toUpperCase()}
                       </span>
                     )}
@@ -157,7 +155,7 @@ export default function QaBoardClient({
                       Posted by {q.author_name}
                     </span>
                   </div>
-                  <h4 className="font-bold text-base text-text-primary hover:text-accent-primary transition-colors leading-snug truncate">
+                  <h4 className="font-bold text-base text-text-primary leading-snug truncate">
                     {q.title}
                   </h4>
                   <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed">
@@ -166,7 +164,7 @@ export default function QaBoardClient({
                 </div>
 
                 {/* Answers Count Badge */}
-                <div className="flex items-center gap-1.5 bg-brand-elevated/60 border border-brand-border px-3 py-1.5 rounded-lg text-text-secondary font-bold text-xs shrink-0 select-none">
+                <div className="flex items-center gap-1.5 bg-white/[0.04] border border-white/[0.06] px-3 py-1.5 rounded-lg text-text-secondary font-bold text-xs shrink-0 select-none backdrop-blur-sm">
                   <MessageSquare className="h-4 w-4 text-text-tertiary" />
                   <span>{q.answers_count}</span>
                 </div>
@@ -178,9 +176,9 @@ export default function QaBoardClient({
 
       {/* Ask Question Dialog */}
       {askOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-primary/85 backdrop-blur-md">
-          <div className="w-full max-w-lg bg-brand-surface border border-brand-border rounded-2xl p-6 shadow-modal space-y-4">
-            <div className="flex items-center justify-between border-b border-brand-border pb-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 glass-modal-overlay">
+          <div className="w-full max-w-lg glass-modal p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
               <h3 className="font-bold text-base">Ask a Study Question</h3>
               <button onClick={() => setAskOpen(false)} className="text-text-tertiary hover:text-text-primary cursor-pointer">
                 <X className="h-5 w-5" />
@@ -195,7 +193,7 @@ export default function QaBoardClient({
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   required
-                  className="w-full h-10 px-4 rounded-lg bg-brand-elevated border border-brand-border text-sm"
+                  className="w-full h-10 px-4 rounded-lg glass-form-control text-sm"
                 />
               </div>
 
@@ -204,7 +202,7 @@ export default function QaBoardClient({
                 <select
                   value={newSubjectId}
                   onChange={(e) => setNewSubjectId(e.target.value)}
-                  className="w-full h-10 px-3 rounded-lg bg-brand-elevated border border-brand-border text-sm text-text-primary"
+                  className="w-full h-10 px-3 rounded-lg glass-form-control text-sm"
                 >
                   <option value="">No specific subject tag</option>
                   {subjects.map((sub) => (
@@ -222,7 +220,7 @@ export default function QaBoardClient({
                   value={newBody}
                   onChange={(e) => setNewBody(e.target.value)}
                   required
-                  className="w-full h-32 p-3 rounded-lg bg-brand-elevated border border-brand-border text-sm focus:outline-none"
+                  className="w-full h-32 p-3 rounded-lg glass-form-control text-sm"
                 />
               </div>
 

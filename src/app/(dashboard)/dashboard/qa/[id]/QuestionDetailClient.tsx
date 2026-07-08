@@ -2,15 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { 
   ArrowLeft, 
   Check, 
   ChevronUp, 
   ChevronDown, 
-  MessageSquare, 
-  UserRound,
-  FileText
+  MessageSquare
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -67,7 +64,6 @@ export default function QuestionDetailClient({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to submit answer.");
 
-      // Add locally for instant update
       const newAns: Answer = {
         id: data.id,
         question_id: question.id,
@@ -146,17 +142,17 @@ export default function QuestionDetailClient({
       {/* Back Button */}
       <button 
         onClick={() => router.back()}
-        className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-text-secondary hover:text-text-primary cursor-pointer"
+        className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-text-secondary hover:text-text-primary cursor-pointer transition-colors"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Q&A Board
       </button>
 
       {/* Question Details Card */}
-      <div className="rounded-2xl border border-brand-border bg-brand-surface p-6 shadow-card space-y-4">
+      <div className="glass-card p-6 space-y-4">
         <div className="flex flex-wrap items-center gap-2">
           {question.subject_code && (
-            <span className="text-[10px] font-mono font-bold text-accent-primary bg-semantic-course-badge-bg px-2.5 py-1 rounded border border-accent-primary/20">
+            <span className="text-[10px] font-mono font-bold glass-badge px-2.5 py-1 rounded">
               {question.subject_code.toUpperCase()}
             </span>
           )}
@@ -180,7 +176,7 @@ export default function QuestionDetailClient({
         </div>
 
         {answers.length === 0 ? (
-          <div className="rounded-xl border border-brand-border bg-brand-surface/20 p-8 text-center text-xs text-text-tertiary">
+          <div className="glass-empty p-8 text-center text-xs text-text-tertiary">
             No answers posted yet. Be the first to share a solution!
           </div>
         ) : (
@@ -192,14 +188,12 @@ export default function QuestionDetailClient({
                 <div 
                   key={ans.id}
                   className={cn(
-                    "flex items-start gap-4 p-4 rounded-xl border transition-all shadow-card",
-                    isAccepted 
-                      ? "border-accent-success/30 bg-accent-success/5" 
-                      : "border-brand-border bg-brand-surface/50"
+                    "glass-card flex items-start gap-4 p-5",
+                    isAccepted && "!border-accent-success/25 shadow-[0_0_20px_rgba(134,239,172,0.05)]"
                   )}
                 >
                   {/* Upvote controls */}
-                  <div className="flex flex-col items-center gap-0.5 bg-brand-elevated/40 p-1.5 rounded-lg border border-brand-border shrink-0 select-none">
+                  <div className="glass-vote flex flex-col items-center gap-0.5 p-1.5 shrink-0 select-none">
                     <button
                       onClick={() => handleVote(ans.id, 1)}
                       className={cn(
@@ -239,11 +233,11 @@ export default function QuestionDetailClient({
                     </div>
                   </div>
 
-                  {/* Accept action (only for question author if no answer is accepted, or toggle) */}
+                  {/* Accept action */}
                   {isQuestionAuthor && !isAccepted && (
                     <button
                       onClick={() => handleAccept(ans.id)}
-                      className="p-2 rounded-lg border border-brand-border bg-brand-elevated/40 hover:bg-accent-success/20 hover:text-accent-success hover:border-accent-success/20 text-text-tertiary transition-all cursor-pointer shrink-0"
+                      className="p-2 rounded-lg border border-white/[0.06] bg-white/[0.03] hover:bg-accent-success/[0.08] hover:text-accent-success hover:border-accent-success/20 text-text-tertiary transition-all cursor-pointer shrink-0 backdrop-blur-sm"
                       title="Accept this answer"
                     >
                       <Check className="h-4 w-4" />
@@ -257,7 +251,7 @@ export default function QuestionDetailClient({
       </div>
 
       {/* Answer Composer */}
-      <div className="rounded-2xl border border-brand-border bg-brand-surface p-6 shadow-card space-y-4">
+      <div className="glass-card p-6 space-y-4">
         <h4 className="font-bold text-sm">Post Your Answer</h4>
         <form onSubmit={handlePostAnswer} className="space-y-4">
           <textarea
@@ -265,7 +259,7 @@ export default function QuestionDetailClient({
             value={newAnswerBody}
             onChange={(e) => setNewAnswerBody(e.target.value)}
             required
-            className="w-full h-32 p-4 rounded-xl bg-brand-elevated border border-brand-border text-sm text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-all"
+            className="w-full h-32 p-4 rounded-xl glass-form-control text-sm"
           />
           <button
             type="submit"

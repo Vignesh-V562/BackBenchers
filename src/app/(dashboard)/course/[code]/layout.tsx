@@ -2,7 +2,6 @@ import { notFound, redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth-options";
 import { queryD1 } from "@/lib/d1";
-import Link from "next/link";
 import NavigationTabs from "./NavigationTabs";
 
 export default async function CourseLayout({
@@ -39,17 +38,19 @@ export default async function CourseLayout({
   return (
     <div className="flex-1 flex flex-col p-6 max-w-5xl w-full mx-auto space-y-6">
       {/* Course Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-brand-border pb-6">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-bold text-accent-primary bg-semantic-course-badge-bg px-2.5 py-1 rounded border border-accent-primary/20">
-              {subject.course_code.toUpperCase()}
-            </span>
-            <span className="text-xs text-text-tertiary uppercase tracking-wider font-bold">
-              {subject.department_name} Department • Semester {subject.year_or_semester}
-            </span>
+      <div className="glass-card p-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono font-bold glass-badge px-2.5 py-1 rounded">
+                {subject.course_code.toUpperCase()}
+              </span>
+              <span className="text-xs text-text-tertiary uppercase tracking-wider font-bold">
+                {subject.department_name} Department • Semester {subject.year_or_semester}
+              </span>
+            </div>
+            <h2 className="text-2xl font-extrabold tracking-tight mt-2">{subject.name}</h2>
           </div>
-          <h2 className="text-2xl font-extrabold tracking-tight mt-2">{subject.name}</h2>
         </div>
       </div>
 

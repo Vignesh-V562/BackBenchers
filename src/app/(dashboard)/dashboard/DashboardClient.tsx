@@ -7,11 +7,8 @@ import {
   ChevronDown, 
   ChevronRight, 
   Plus, 
-  BookOpen, 
   Building2, 
-  X,
-  FileText,
-  HelpCircle
+  X
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -158,7 +155,7 @@ export default function DashboardClient({
             placeholder="Search subjects by name or course code (e.g. CS101)..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-12 pr-12 text-sm rounded-xl bg-brand-surface border border-brand-border text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-accent-primary focus:ring-1 focus:ring-accent-primary transition-all shadow-lg"
+            className="w-full h-12 pl-12 pr-12 text-sm rounded-xl glass-form-control shadow-lg"
           />
           {searchQuery && (
             <button
@@ -172,16 +169,16 @@ export default function DashboardClient({
 
         {/* Search Results Dropdown */}
         {searchQuery && (
-          <div className="absolute left-0 right-0 top-full mt-2 z-20 max-h-60 overflow-y-auto rounded-xl border border-brand-border bg-brand-card p-2 shadow-dropdown backdrop-blur-xl">
+          <div className="absolute left-0 right-0 top-full mt-2 z-20 max-h-60 overflow-y-auto rounded-xl glass-modal p-2">
             {filteredSubjects.length > 0 ? (
               filteredSubjects.map((s) => (
                 <Link
                   key={s.id}
                   href={`/course/${s.course_code.toUpperCase()}/notes`}
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-brand-elevated transition-colors"
+                  className="flex items-center justify-between p-3 rounded-lg hover:bg-white/[0.04] transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-mono font-bold text-accent-primary bg-semantic-course-badge-bg px-2.5 py-1 rounded border border-accent-primary/20">
+                    <span className="text-xs font-mono font-bold glass-badge px-2.5 py-1 rounded">
                       {s.course_code.toUpperCase()}
                     </span>
                     <span className="text-sm font-semibold truncate max-w-xs sm:max-w-md">
@@ -206,7 +203,7 @@ export default function DashboardClient({
       <div className="flex flex-wrap gap-3">
         <button
           onClick={() => setShowAddDept(true)}
-          className="inline-flex h-9 items-center gap-2 rounded-full border border-brand-border bg-brand-surface/40 hover:bg-brand-surface px-4 py-2 text-xs font-bold text-text-secondary hover:text-text-primary transition-all cursor-pointer"
+          className="inline-flex h-9 items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm hover:bg-white/[0.06] px-4 py-2 text-xs font-bold text-text-secondary hover:text-text-primary transition-all cursor-pointer"
         >
           <Building2 className="h-3.5 w-3.5" />
           Add Department
@@ -220,7 +217,7 @@ export default function DashboardClient({
             }
             setShowAddSubj(true);
           }}
-          className="inline-flex h-9 items-center gap-2 rounded-full border border-brand-border bg-brand-surface/40 hover:bg-brand-surface px-4 py-2 text-xs font-bold text-text-secondary hover:text-text-primary transition-all cursor-pointer"
+          className="inline-flex h-9 items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm hover:bg-white/[0.06] px-4 py-2 text-xs font-bold text-text-secondary hover:text-text-primary transition-all cursor-pointer"
         >
           <Plus className="h-3.5 w-3.5" />
           Add Subject
@@ -229,10 +226,10 @@ export default function DashboardClient({
 
       {/* Inline Forms / Modals for adding Dept/Subject */}
       {showAddDept && (
-        <div className="rounded-xl border border-brand-border bg-brand-surface p-6 space-y-4">
-          <div className="flex items-center justify-between border-b border-brand-border pb-3">
+        <div className="glass-card p-6 space-y-4">
+          <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
             <h3 className="font-bold text-sm">Add College Department</h3>
-            <button onClick={() => setShowAddDept(false)} className="text-text-tertiary hover:text-text-primary">
+            <button onClick={() => setShowAddDept(false)} className="text-text-tertiary hover:text-text-primary cursor-pointer">
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -243,12 +240,12 @@ export default function DashboardClient({
               value={newDeptName}
               onChange={(e) => setNewDeptName(e.target.value)}
               required
-              className="flex-1 h-10 px-4 rounded-lg bg-brand-elevated border border-brand-border text-sm"
+              className="flex-1 h-10 px-4 rounded-lg glass-form-control text-sm"
             />
             <button
               type="submit"
               disabled={addingDept}
-              className="px-6 rounded-lg bg-accent-primary text-sm font-bold text-brand-primary hover:bg-accent-primary-hover disabled:opacity-50"
+              className="px-6 rounded-lg bg-accent-primary text-sm font-bold text-brand-primary hover:bg-accent-primary-hover disabled:opacity-50 transition-all"
             >
               {addingDept ? "Creating..." : "Create"}
             </button>
@@ -257,10 +254,10 @@ export default function DashboardClient({
       )}
 
       {showAddSubj && (
-        <div className="rounded-xl border border-brand-border bg-brand-surface p-6 space-y-4">
-          <div className="flex items-center justify-between border-b border-brand-border pb-3">
+        <div className="glass-card p-6 space-y-4">
+          <div className="flex items-center justify-between border-b border-white/[0.06] pb-3">
             <h3 className="font-bold text-sm">Register New Subject</h3>
-            <button onClick={() => setShowAddSubj(false)} className="text-text-tertiary hover:text-text-primary">
+            <button onClick={() => setShowAddSubj(false)} className="text-text-tertiary hover:text-text-primary cursor-pointer">
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -274,7 +271,7 @@ export default function DashboardClient({
                   value={newSubjName}
                   onChange={(e) => setNewSubjName(e.target.value)}
                   required
-                  className="w-full h-10 px-4 rounded-lg bg-brand-elevated border border-brand-border text-sm"
+                  className="w-full h-10 px-4 rounded-lg glass-form-control text-sm"
                 />
               </div>
 
@@ -286,7 +283,7 @@ export default function DashboardClient({
                   value={newSubjCode}
                   onChange={(e) => setNewSubjCode(e.target.value)}
                   required
-                  className="w-full h-10 px-4 rounded-lg bg-brand-elevated border border-brand-border text-sm"
+                  className="w-full h-10 px-4 rounded-lg glass-form-control text-sm"
                 />
               </div>
             </div>
@@ -297,7 +294,7 @@ export default function DashboardClient({
                 <select
                   value={newSubjSem}
                   onChange={(e) => setNewSubjSem(e.target.value)}
-                  className="w-full h-10 px-3 rounded-lg bg-brand-elevated border border-brand-border text-sm text-text-primary"
+                  className="w-full h-10 px-3 rounded-lg glass-form-control text-sm"
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
                     <option key={sem} value={sem}>Semester {sem}</option>
@@ -311,7 +308,7 @@ export default function DashboardClient({
                   value={newSubjDeptId}
                   onChange={(e) => setNewSubjDeptId(e.target.value)}
                   required
-                  className="w-full h-10 px-3 rounded-lg bg-brand-elevated border border-brand-border text-sm text-text-primary"
+                  className="w-full h-10 px-3 rounded-lg glass-form-control text-sm"
                 >
                   <option value="">Select Department...</option>
                   {departments.map((d) => (
@@ -324,7 +321,7 @@ export default function DashboardClient({
             <button
               type="submit"
               disabled={addingSubj}
-              className="w-full h-10 rounded-lg bg-accent-primary text-sm font-bold text-brand-primary hover:bg-accent-primary-hover disabled:opacity-50"
+              className="w-full h-10 rounded-lg bg-accent-primary text-sm font-bold text-brand-primary hover:bg-accent-primary-hover disabled:opacity-50 transition-all"
             >
               {addingSubj ? "Registering..." : "Register Subject"}
             </button>
@@ -339,8 +336,8 @@ export default function DashboardClient({
         </h3>
 
         {departments.length === 0 ? (
-          <div className="rounded-xl border border-brand-border bg-brand-surface/20 p-8 text-center text-sm text-text-tertiary">
-            No departments created yet for this college. Click "Add Department" to start.
+          <div className="glass-empty p-8 text-center text-sm text-text-tertiary">
+            No departments created yet for this college. Click &quot;Add Department&quot; to start.
           </div>
         ) : (
           <div className="space-y-3">
@@ -358,17 +355,19 @@ export default function DashboardClient({
               return (
                 <div 
                   key={dept.id} 
-                  className="rounded-xl border border-brand-border bg-brand-surface/40 overflow-hidden"
+                  className="glass-card overflow-hidden"
                 >
                   {/* Department Row Header */}
                   <button
                     onClick={() => toggleDept(dept.id)}
-                    className="w-full flex items-center justify-between p-4 text-left hover:bg-brand-elevated/40 transition-colors cursor-pointer"
+                    className="w-full flex items-center justify-between p-4 text-left hover:bg-white/[0.03] transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-3">
-                      <Building2 className="h-5 w-5 text-accent-primary" />
+                      <div className="h-8 w-8 rounded-lg bg-accent-primary/10 flex items-center justify-center">
+                        <Building2 className="h-4 w-4 text-accent-primary" />
+                      </div>
                       <span className="font-bold text-sm">{dept.name} Department</span>
-                      <span className="text-xs text-text-tertiary bg-brand-elevated px-2 py-0.5 rounded border border-brand-border">
+                      <span className="text-xs text-text-tertiary bg-white/[0.04] px-2 py-0.5 rounded-full border border-white/[0.06]">
                         {deptSubjects.length} subjects
                       </span>
                     </div>
@@ -381,7 +380,7 @@ export default function DashboardClient({
 
                   {/* Expanded Subjects List */}
                   {isOpen && (
-                    <div className="border-t border-brand-border bg-brand-surface/20 p-4 space-y-4">
+                    <div className="border-t border-white/[0.06] bg-white/[0.02] p-4 space-y-4">
                       {deptSubjects.length === 0 ? (
                         <p className="text-xs text-text-tertiary italic">
                           No subjects registered in this department yet.
@@ -399,9 +398,9 @@ export default function DashboardClient({
                                   <Link
                                     key={s.id}
                                     href={`/course/${s.course_code.toUpperCase()}/notes`}
-                                    className="flex items-center gap-3 p-3 rounded-lg border border-brand-border bg-brand-elevated/50 hover:bg-brand-elevated hover:border-brand-border-strong transition-all"
+                                    className="flex items-center gap-3 p-3 rounded-lg border border-white/[0.06] bg-white/[0.03] hover:bg-white/[0.06] hover:border-accent-primary/20 transition-all duration-200"
                                   >
-                                    <span className="text-[10px] font-mono font-bold text-accent-primary bg-semantic-course-badge-bg px-2 py-0.5 rounded border border-accent-primary/20 shrink-0">
+                                    <span className="text-[10px] font-mono font-bold glass-badge px-2 py-0.5 rounded shrink-0">
                                       {s.course_code.toUpperCase()}
                                     </span>
                                     <span className="text-xs font-semibold text-text-secondary hover:text-text-primary truncate">

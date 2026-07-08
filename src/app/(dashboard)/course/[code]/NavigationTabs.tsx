@@ -8,7 +8,7 @@ import {
   Flame, 
   BookOpen 
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+
 
 // Simple utility function in case tailwind-merge / clsx is missing, or import directly
 function classNames(...classes: any[]) {
@@ -43,7 +43,7 @@ export default function NavigationTabs({ code }: { code: string }) {
   ];
 
   return (
-    <div className="flex border-b border-brand-border overflow-x-auto scrollbar-none gap-2 pb-0.5">
+    <div className="flex glass-toolbar p-1.5 overflow-x-auto scrollbar-none gap-1">
       {tabs.map((tab) => {
         const Icon = tab.icon;
         const isActive = pathname === tab.href;
@@ -53,10 +53,10 @@ export default function NavigationTabs({ code }: { code: string }) {
             key={tab.name}
             href={tab.href}
             className={classNames(
-              "flex items-center gap-2 px-4 py-3 text-xs font-bold uppercase tracking-wider border-b-2 transition-all whitespace-nowrap",
+              "flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all whitespace-nowrap",
               isActive
-                ? "border-accent-primary text-accent-primary"
-                : "border-transparent text-text-secondary hover:text-text-primary hover:border-brand-border-strong"
+                ? "bg-accent-primary/15 text-accent-primary border border-accent-primary/20 shadow-[0_0_12px_rgba(180,168,255,0.1)]"
+                : "text-text-secondary hover:text-text-primary hover:bg-white/[0.04]"
             )}
           >
             <Icon className="h-4 w-4 shrink-0" />
