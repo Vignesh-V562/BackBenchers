@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+
 import Image from "next/image";
 import {
   ArrowRight,
@@ -70,7 +70,7 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
       } else {
         setForgotError(data.error || "Failed to process reset request.");
       }
-    } catch (err) {
+    } catch {
       setForgotError("A network error occurred. Please try again.");
     } finally {
       setForgotLoading(false);
@@ -105,7 +105,7 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
         router.push("/dashboard");
         router.refresh();
       }
-    } catch (err) {
+    } catch {
       setSignInError("An unexpected error occurred.");
     } finally {
       setSignInLoading(false);
@@ -142,7 +142,7 @@ export default function AuthCard({ initialMode }: AuthCardProps) {
       if (data.user?.collegeStatus === "PENDING") {
         setSignUpIsPending(true);
       }
-    } catch (err) {
+    } catch {
       setSignUpError("An unexpected network error occurred.");
       setSignUpLoading(false);
     }

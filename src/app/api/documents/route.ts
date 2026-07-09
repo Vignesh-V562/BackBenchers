@@ -105,10 +105,8 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    let {
-      subjectId,
-      staffId,
-      departmentId,
+    let { subjectId, staffId, departmentId } = body;
+    const {
       departmentName,
       subjectName,
       courseCode,

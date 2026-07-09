@@ -7,7 +7,6 @@ import {
   ChevronDown, 
   Download, 
   Flag, 
-  FileText, 
   X,
   GraduationCap
 } from "lucide-react";
@@ -35,7 +34,6 @@ export default function PyqClient({
   subjectId,
   departmentId,
   staffList,
-  user,
 }: {
   subjectId: string;
   departmentId: string;
@@ -87,6 +85,7 @@ export default function PyqClient({
 
   useEffect(() => {
     fetchPyqs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory, selectedYear, page]);
 
   const handleVote = async (pyqId: string, value: number) => {
@@ -149,7 +148,7 @@ export default function PyqClient({
       setReportReason("");
       setSelectedReportId(null);
       toast.success("Report submitted.");
-    } catch (err: any) {
+    } catch {
       toast.error("Error submitting report.");
     }
   };

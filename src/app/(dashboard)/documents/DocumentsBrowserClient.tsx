@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { 
-  ChevronUp, 
-  ChevronDown, 
-  Download, 
+import {
+  ChevronUp,
+  ChevronDown,
+  Download,
   Search,
   FileText,
   BookOpen,
@@ -43,7 +43,7 @@ export default function DocumentsBrowserClient({
 }) {
   const [documents, setDocuments] = useState<Note[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Search and Filter States
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -71,7 +71,7 @@ export default function DocumentsBrowserClient({
       if (selectedStaffId) url += `&staffId=${selectedStaffId}`;
       if (selectedCourseCode) url += `&courseCode=${encodeURIComponent(selectedCourseCode)}`;
       if (selectedType) url += `&type=${selectedType}`;
-      
+
       const res = await fetch(url);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to fetch documents.");
@@ -82,9 +82,9 @@ export default function DocumentsBrowserClient({
       setLoading(false);
     }
   };
-
   useEffect(() => {
     fetchDocuments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedSearch, sort, selectedStaffId, selectedCourseCode, selectedType, page]);
 
   const handleVote = async (noteId: string, value: number) => {
@@ -101,12 +101,12 @@ export default function DocumentsBrowserClient({
         prev.map((n) =>
           n.id === noteId
             ? {
-                ...n,
-                upvotes_count: data.upvotes_count,
-                downloads_count: data.downloads_count,
-                score: data.score,
-                user_vote: data.user_vote,
-              }
+              ...n,
+              upvotes_count: data.upvotes_count,
+              downloads_count: data.downloads_count,
+              score: data.score,
+              user_vote: data.user_vote,
+            }
             : n
         )
       );
@@ -120,7 +120,7 @@ export default function DocumentsBrowserClient({
   const handleDownload = async (noteId: string, fileUrl: string) => {
     try {
       await fetch(`/api/documents/${noteId}/download`, { method: "POST" });
-      
+
       setDocuments((prev) =>
         prev.map((n) =>
           n.id === noteId ? { ...n, downloads_count: n.downloads_count + 1 } : n
@@ -161,7 +161,7 @@ export default function DocumentsBrowserClient({
           <div className="flex items-center gap-1.5 bg-white/[0.02] px-2 py-1.5 rounded-lg border border-white/[0.06]">
             <Filter className="h-3.5 w-3.5 text-text-tertiary ml-1" />
             <span className="text-xs font-semibold text-text-tertiary pr-1">Filters:</span>
-            
+
             <select
               value={selectedType}
               onChange={(e) => { setSelectedType(e.target.value); setPage(1); }}
@@ -196,8 +196,8 @@ export default function DocumentsBrowserClient({
           </div>
 
           <div className="flex items-center gap-1.5 bg-white/[0.02] px-2 py-1.5 rounded-lg border border-white/[0.06]">
-             <span className="text-xs font-semibold text-text-tertiary px-1">Sort:</span>
-             {["score", "downloads", "upvotes", "newest"].map((opt) => (
+            <span className="text-xs font-semibold text-text-tertiary px-1">Sort:</span>
+            {["score", "downloads", "upvotes", "newest"].map((opt) => (
               <button
                 key={opt}
                 onClick={() => { setSort(opt); setPage(1); }}
@@ -266,15 +266,15 @@ export default function DocumentsBrowserClient({
               <div className="min-w-0 flex-1 space-y-2 order-1 sm:order-2">
                 <div className="flex flex-wrap items-center gap-2">
                   {doc.type === "NOTES" ? (
-                     <span className="text-[10px] font-bold uppercase tracking-wider text-accent-primary/80 bg-accent-primary/[0.06] px-2 py-0.5 rounded flex items-center gap-1 border border-accent-primary/10">
-                       <FileText className="h-3 w-3" /> Notes
-                     </span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-accent-primary/80 bg-accent-primary/[0.06] px-2 py-0.5 rounded flex items-center gap-1 border border-accent-primary/10">
+                      <FileText className="h-3 w-3" /> Notes
+                    </span>
                   ) : (
                     <span className="text-[10px] font-bold uppercase tracking-wider text-accent-warning/80 bg-accent-warning/[0.06] px-2 py-0.5 rounded flex items-center gap-1 border border-accent-warning/10">
-                       <BookOpen className="h-3 w-3" /> PYQ
-                     </span>
+                      <BookOpen className="h-3 w-3" /> PYQ
+                    </span>
                   )}
-                  
+
                   <Link href={`/course/${doc.subject_code}/notes`} className="text-[10px] font-bold font-mono text-text-secondary bg-white/[0.04] px-2 py-0.5 rounded border border-white/[0.06] hover:text-text-primary transition-colors">
                     {doc.subject_code}
                   </Link>
@@ -287,7 +287,7 @@ export default function DocumentsBrowserClient({
                     </span>
                   )}
                 </div>
-                
+
                 <h4 className="font-bold text-base text-text-primary leading-snug">
                   {doc.title}
                 </h4>
@@ -296,7 +296,7 @@ export default function DocumentsBrowserClient({
                     {doc.description}
                   </p>
                 )}
-                
+
                 <div className="flex items-center gap-3 pt-1 text-[10px] text-text-tertiary font-medium">
                   <span>Uploaded by {doc.uploader_name}</span>
                   <span>•</span>

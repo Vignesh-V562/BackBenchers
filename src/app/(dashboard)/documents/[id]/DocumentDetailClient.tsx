@@ -33,7 +33,6 @@ interface DocDetail {
 export default function DocumentDetailClient({
   doc,
   initialUserVote,
-  user,
 }: {
   doc: DocDetail;
   initialUserVote: number;
@@ -92,7 +91,7 @@ export default function DocumentDetailClient({
       setReportOpen(false);
       setReportReason("");
       toast.success("Report submitted.");
-    } catch (err: any) {
+    } catch {
       toast.error("Error submitting report.");
     }
   };

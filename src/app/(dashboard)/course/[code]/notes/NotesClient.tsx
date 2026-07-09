@@ -33,7 +33,6 @@ export default function NotesClient({
   subjectId,
   departmentId,
   staffList,
-  user,
 }: {
   subjectId: string;
   departmentId: string;
@@ -82,6 +81,7 @@ export default function NotesClient({
 
   useEffect(() => {
     fetchNotes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sort, page, selectedStaffId]);
 
   const handleVote = async (noteId: string, value: number) => {

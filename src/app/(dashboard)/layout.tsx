@@ -6,7 +6,6 @@ import Link from "next/link";
 import { 
   GraduationCap, 
   LayoutDashboard, 
-  FolderLock, 
   HelpCircle, 
   ShieldAlert,
   UserCheck,

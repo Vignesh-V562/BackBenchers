@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, LayoutDashboard, FolderLock, HelpCircle, UserCheck, Search, Trophy, FileText } from "lucide-react";
+import { Menu, X, LayoutDashboard, HelpCircle, UserCheck, Search, Trophy, FileText } from "lucide-react";
 import SignOutButton from "./SignOutButton";
 
 interface MobileNavProps {
