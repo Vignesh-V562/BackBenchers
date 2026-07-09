@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/Vignesh-V562/BackBenchers/main/public/favicon.ico" width="80" alt="BackBenchers Logo" />
+  <img src="https://raw.githubusercontent.com/Vignesh-V562/BackBenchers/main/public/Logo.png" width="80" alt="BackBenchers Logo" />
   <h1>BackBenchers</h1>
   <p><strong>A secure, multi-tenant academic resource sharing platform designed exclusively for college students.</strong></p>
 
