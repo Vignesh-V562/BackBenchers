@@ -88,25 +88,24 @@ export async function POST(request: Request) {
     // 3. Hash password
     const passwordHash = await bcrypt.hash(password, 10);
 
-    // 4. Create user
-    const userId = crypto.randomUUID();
+    // 4. Generate and store verification token with user data
     const cleanYear = year ? parseInt(year, 10) : null;
     const cleanDept = department || null;
+    const userData = JSON.stringify({
+      name: name.trim(),
+      passwordHash,
+      collegeId,
+      department: cleanDept,
+      year: cleanYear
+    });
 
-    await queryD1(
-      `INSERT INTO users (id, college_id, name, email, department, year, role, password_hash)
-       VALUES (?, ?, ?, ?, ?, ?, 'STUDENT', ?)`,
-      [userId, collegeId, name.trim(), cleanEmail, cleanDept, cleanYear, passwordHash]
-    );
-
-    // 5. Generate and store verification token
     const verificationToken = crypto.randomBytes(32).toString("hex");
     const expires = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(); // 24 hours
     const tokenId = crypto.randomUUID();
 
     await queryD1(
-      `INSERT INTO verification_tokens (id, email, token, type, expires) VALUES (?, ?, ?, 'EMAIL_VERIFICATION', ?)`,
-      [tokenId, cleanEmail, verificationToken, expires]
+      `INSERT INTO verification_tokens (id, email, token, type, expires, user_data) VALUES (?, ?, ?, 'EMAIL_VERIFICATION', ?, ?)`,
+      [tokenId, cleanEmail, verificationToken, expires, userData]
     );
 
     // 6. Send verification email
@@ -134,7 +133,6 @@ export async function POST(request: Request) {
       success: true,
       message: "User registered successfully. Please verify your email address.",
       user: {
-        id: userId,
         name,
         email: cleanEmail,
         collegeId,

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { queryD1 } from "@/lib/d1";
+import crypto from "crypto";
 
 export async function GET(request: Request) {
   try {
@@ -12,7 +13,7 @@ export async function GET(request: Request) {
 
     // 1. Fetch token details
     const { results: tokens } = await queryD1(
-      "SELECT id, email, expires FROM verification_tokens WHERE token = ? AND type = 'EMAIL_VERIFICATION' LIMIT 1",
+      "SELECT id, email, expires, user_data FROM verification_tokens WHERE token = ? AND type = 'EMAIL_VERIFICATION' LIMIT 1",
       [token]
     );
 
@@ -29,11 +30,23 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Verification token has expired. Please sign up again." }, { status: 400 });
     }
 
-    // 3. Mark user as verified
-    await queryD1(
-      "UPDATE users SET email_verified = datetime('now') WHERE email = ?",
-      [tokenRecord.email]
-    );
+    // 3. Create user in database
+    if (tokenRecord.user_data) {
+      const userData = JSON.parse(tokenRecord.user_data);
+      const userId = crypto.randomUUID();
+      
+      await queryD1(
+        `INSERT INTO users (id, college_id, name, email, department, year, role, password_hash, email_verified)
+         VALUES (?, ?, ?, ?, ?, ?, 'STUDENT', ?, datetime('now'))`,
+        [userId, userData.collegeId, userData.name, tokenRecord.email, userData.department, userData.year, userData.passwordHash]
+      );
+    } else {
+      // Fallback for older tokens (if any)
+      await queryD1(
+        "UPDATE users SET email_verified = datetime('now') WHERE email = ?",
+        [tokenRecord.email]
+      );
+    }
 
     // 4. Delete the token
     await queryD1("DELETE FROM verification_tokens WHERE id = ?", [tokenRecord.id]);
