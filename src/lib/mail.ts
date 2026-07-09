@@ -1,5 +1,7 @@
+import nodemailer from "nodemailer";
+
 /**
- * Email dispatch utility using Resend REST API or local log fallback
+ * Email dispatch utility using Nodemailer (SMTP) or local log fallback
  */
 export async function sendEmail({
   to,
@@ -10,9 +12,10 @@ export async function sendEmail({
   subject: string;
   html: string;
 }) {
-  const apiKey = process.env.RESEND_API_KEY;
+  const smtpUser = process.env.SMTP_USER;
+  const smtpPassword = process.env.SMTP_PASSWORD;
 
-  if (!apiKey) {
+  if (!smtpUser || !smtpPassword) {
     console.log("\n=======================================================");
     console.log(`[MOCK EMAIL SERVICE]`);
     console.log(`To:      ${to}`);
@@ -38,27 +41,24 @@ export async function sendEmail({
   }
 
   try {
-    const res = await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: smtpUser,
+        pass: smtpPassword,
       },
-      body: JSON.stringify({
-        from: "Backbenchers <onboarding@resend.dev>", // resend default onboarding sandbox sender
-        to,
-        subject,
-        html,
-      }),
     });
 
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(data.message || JSON.stringify(data));
-    }
-    return { success: true, data };
+    const info = await transporter.sendMail({
+      from: `"Backbenchers" <${smtpUser}>`,
+      to,
+      subject,
+      html,
+    });
+
+    return { success: true, messageId: info.messageId };
   } catch (err: any) {
-    console.error("Resend send email error:", err.message || err);
+    console.error("Nodemailer send email error:", err.message || err);
     throw err;
   }
 }
